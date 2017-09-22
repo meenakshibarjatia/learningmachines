@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import hashlib
+from sklearn.model_selection import train_test_split
 
 HOUSING_PATH = "datasets/housing/"
 
@@ -30,8 +31,12 @@ def test_set_check(identifier, test_ratio, hash):
     return hash(np.int64(identifier)).digest()[-1] < 256*test_ratio
     
 def test_train_split_hash(data, test_ratio, id_col, hash = hashlib.md5):
-    ids = data['id_col']
+    ids = data[id_col]
     test_set_id = ids.apply(lambda idval:test_set_check(idval, test_ratio, hash))
     return data.loc[test_set_id], data.loc[~test_set_id]
     
 housing.reset_index(inplace = True)
+
+test_set, train_set = test_train_split_hash(housing, 0.2, "index")
+
+
